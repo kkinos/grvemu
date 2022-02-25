@@ -10,7 +10,7 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "grvemu [binary file] [instruction]",
+	Use:   "grvemu [binary file]",
 	Short: "A toy RISC-V emulator for cli written in Go",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -24,7 +24,7 @@ var rootCmd = &cobra.Command{
 			return err
 		}
 		switch inst {
-		case "r32i":
+		case "rv32i":
 			file, err := os.Open(args[0])
 			if err != nil {
 				return err
@@ -40,13 +40,11 @@ var rootCmd = &cobra.Command{
 				return err
 			}
 
-		// TODO support r64i
-		// case "r64i":
-		// fmt.Println(inst)
+		// TODO support rv64i
 
 		default:
 			fmt.Printf("%s is not supported\n", inst)
-			fmt.Printf("this emulator supports r32i\n")
+			fmt.Printf("this emulator supports rv32i\n")
 		}
 		return nil
 
@@ -58,6 +56,6 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().StringP("inst", "i", "r32i", "instruction")
+	rootCmd.Flags().StringP("inst", "i", "rv32i", "instruction")
 	rootCmd.Flags().BoolP("debug", "d", false, "debug mode")
 }
