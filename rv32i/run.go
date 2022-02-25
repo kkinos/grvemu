@@ -4,7 +4,7 @@ import "fmt"
 
 func Run(binary []byte, debug bool) error {
 	var cpu Cpu
-	cpu = SetExit(cpu, 0x34333231)
+	cpu = SetExit(cpu, 0x14131211)
 
 	var memory Memory
 	memory = RoadMemory(binary, memory)
@@ -19,11 +19,24 @@ func Run(binary []byte, debug bool) error {
 func Loop(cpu Cpu, memory Memory, debug bool) error {
 	var bits uint32
 	for {
-		// Instruction Fetch
+		// IF Stage
 		bits = uint32(memory.Memory[cpu.Pc]) | uint32(memory.Memory[cpu.Pc+1])<<8 | uint32(memory.Memory[cpu.Pc+2])<<16 | uint32(memory.Memory[cpu.Pc+3])<<24
 
-		// Instruction Decode
+		// ID Stage
 		inst := Decode(bits)
+
+		// EX Stage
+		addr, err := Execute(inst, cpu)
+		if err != nil {
+			return err
+		}
+
+		// MEM Stage
+		var data int32
+		data, cpu, memory = MemoryAccess(addr, inst, cpu, memory)
+
+		// WB Stage
+		cpu = WriteBack(data, inst, cpu)
 
 		if debug {
 			fmt.Printf("pc   	 : 0x%x\n", cpu.Pc)
@@ -33,6 +46,8 @@ func Loop(cpu Cpu, memory Memory, debug bool) error {
 			fmt.Printf("rd  	 : %d\n", inst.Rd)
 			fmt.Printf("rs1_data : 0x%x\n", cpu.Register[inst.Rs1])
 			fmt.Printf("rs2_data : 0x%x\n", cpu.Register[inst.Rs2])
+			fmt.Printf("wb_data : 0x%x\n", data)
+			fmt.Printf("dm_addr : %d\n", addr)
 			fmt.Print("------\n")
 		}
 		if bits == cpu.Exit {
