@@ -22,6 +22,9 @@ func Execute(inst Instruction, cpu Cpu) (uint32, error) {
 	case LW:
 		addr := cpu.Register[inst.Rs1] + inst.Imm_i
 		return uint32(addr), nil
+	case SW:
+		addr := cpu.Register[inst.Rs1] + inst.Imm_s
+		return uint32(addr), nil
 	default:
 		return 0, nil
 	}

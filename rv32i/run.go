@@ -4,7 +4,7 @@ import "fmt"
 
 func Run(binary []byte, debug bool) error {
 	var cpu Cpu
-	cpu = SetExit(cpu, 0x14131211)
+	cpu = SetExit(cpu, 0x00602823)
 
 	var memory Memory
 	memory = RoadMemory(binary, memory)
@@ -39,15 +39,15 @@ func Loop(cpu Cpu, memory Memory, debug bool) error {
 		cpu = WriteBack(data, inst, cpu)
 
 		if debug {
-			fmt.Printf("pc   	 : 0x%x\n", cpu.Pc)
-			fmt.Printf("inst 	 : 0x%x\n", bits)
-			fmt.Printf("rs1  	 : %d\n", inst.Rs1)
-			fmt.Printf("rs2  	 : %d\n", inst.Rs2)
-			fmt.Printf("rd  	 : %d\n", inst.Rd)
-			fmt.Printf("rs1_data : 0x%x\n", cpu.Register[inst.Rs1])
-			fmt.Printf("rs2_data : 0x%x\n", cpu.Register[inst.Rs2])
-			fmt.Printf("wb_data : 0x%x\n", data)
-			fmt.Printf("dm_addr : %d\n", addr)
+			fmt.Printf("pc   	  : 0x%x\n", cpu.Pc)
+			fmt.Printf("inst 	  : 0x%x\n", bits)
+			fmt.Printf("rs1  	  : %d\n", inst.Rs1)
+			fmt.Printf("rs2  	  : %d\n", inst.Rs2)
+			fmt.Printf("rd  	  : %d\n", inst.Rd)
+			fmt.Printf("rs1_data  : 0x%x\n", cpu.Register[inst.Rs1])
+			fmt.Printf("rs2_data  : 0x%x\n", cpu.Register[inst.Rs2])
+			fmt.Printf("tgt_data  : 0x%x\n", data)
+			fmt.Printf("dmem_addr : %d\n", addr)
 			fmt.Print("------\n")
 		}
 		if bits == cpu.Exit {

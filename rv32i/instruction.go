@@ -7,12 +7,14 @@ type Instruction struct {
 	Rd     uint8
 	Func3  uint8
 	Imm_i  int32
+	Imm_s  int32
 }
 
 type InstructionType int
 
 const (
 	LW InstructionType = iota
+	SW
 	Unknown
 )
 
@@ -24,6 +26,7 @@ func Decode(bits uint32) Instruction {
 	inst.Rd = uint8((bits & 0x00000F80) >> 7)
 	inst.Func3 = uint8((bits & 0x00007000) >> 12)
 	inst.Imm_i = int32((bits & 0xFFF00000) >> 20)
+	inst.Imm_s = int32((bits&0x00000F80)>>7 | (bits&0xFE000000)>>20)
 	return inst
 }
 
@@ -33,6 +36,13 @@ func GetInstructionType(inst Instruction) InstructionType {
 		switch inst.Func3 {
 		case 2:
 			return LW
+		default:
+			return Unknown
+		}
+	case 35:
+		switch inst.Func3 {
+		case 2:
+			return SW
 		default:
 			return Unknown
 		}
