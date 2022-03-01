@@ -11,7 +11,7 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:   "grvemu [binary file]",
-	Short: "A toy RISC-V emulator for cli written in Go",
+	Short: "RISC-V emulator for cli written in Go",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		inst, err := cmd.Flags().GetString("inst")
