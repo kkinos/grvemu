@@ -36,6 +36,15 @@ func WriteBack(data int32, inst Instruction, cpu Cpu) Cpu {
 	case LW:
 		cpu.Register[inst.Rd] = data
 		return cpu
+	case ADD:
+		cpu.Register[inst.Rd] = cpu.Register[inst.Rs1] + cpu.Register[inst.Rs2]
+		return cpu
+	case SUB:
+		cpu.Register[inst.Rd] = cpu.Register[inst.Rs1] - cpu.Register[inst.Rs2]
+		return cpu
+	case ADDI:
+		cpu.Register[inst.Rd] = cpu.Register[inst.Rs1] + inst.Imm_i
+		return cpu
 	default:
 		return cpu
 	}
