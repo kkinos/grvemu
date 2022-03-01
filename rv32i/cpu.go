@@ -45,6 +45,24 @@ func WriteBack(data int32, inst Instruction, cpu Cpu) Cpu {
 	case ADDI:
 		cpu.Register[inst.Rd] = cpu.Register[inst.Rs1] + inst.Imm_i
 		return cpu
+	case AND:
+		cpu.Register[inst.Rd] = cpu.Register[inst.Rs1] & cpu.Register[inst.Rs2]
+		return cpu
+	case OR:
+		cpu.Register[inst.Rd] = cpu.Register[inst.Rs1] | cpu.Register[inst.Rs2]
+		return cpu
+	case XOR:
+		cpu.Register[inst.Rd] = cpu.Register[inst.Rs1] ^ cpu.Register[inst.Rs2]
+		return cpu
+	case ANDI:
+		cpu.Register[inst.Rd] = cpu.Register[inst.Rs1] & inst.Imm_i
+		return cpu
+	case ORI:
+		cpu.Register[inst.Rd] = cpu.Register[inst.Rs1] | inst.Imm_i
+		return cpu
+	case XORI:
+		cpu.Register[inst.Rd] = cpu.Register[inst.Rs1] ^ inst.Imm_i
+		return cpu
 	default:
 		return cpu
 	}

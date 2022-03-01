@@ -19,6 +19,12 @@ const (
 	ADD
 	SUB
 	ADDI
+	AND
+	OR
+	XOR
+	ANDI
+	ORI
+	XORI
 	Unknown
 )
 
@@ -48,6 +54,12 @@ func GetInstructionType(inst Instruction) InstructionType {
 		switch inst.Func3 {
 		case 0:
 			return ADDI
+		case 4:
+			return XORI
+		case 6:
+			return ORI
+		case 7:
+			return ANDI
 		default:
 			return Unknown
 		}
@@ -69,6 +81,12 @@ func GetInstructionType(inst Instruction) InstructionType {
 			default:
 				return Unknown
 			}
+		case 4:
+			return XOR
+		case 6:
+			return OR
+		case 7:
+			return AND
 		default:
 			return Unknown
 		}
