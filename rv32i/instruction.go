@@ -25,6 +25,12 @@ const (
 	ANDI
 	ORI
 	XORI
+	SLL
+	SRL
+	SRA
+	SLLI
+	SRLI
+	SRAI
 	Unknown
 )
 
@@ -36,8 +42,8 @@ func Decode(bits uint32) Instruction {
 	inst.Rd = uint8((bits & 0x00000F80) >> 7)
 	inst.Func3 = uint8((bits & 0x00007000) >> 12)
 	inst.Func7 = uint8((bits & 0xFE000000) >> 25)
-	inst.Imm_i = int32((bits & 0xFFF00000) >> 20)
-	inst.Imm_s = int32((bits&0x00000F80)>>7 | (bits&0xFE000000)>>20)
+	inst.Imm_i = int32(bits&0xFFF00000) >> 20
+	inst.Imm_s = (int32(bits&0x00000F80) >> 7) | (int32(bits&0xFE000000) >> 20)
 	return inst
 }
 
@@ -54,8 +60,19 @@ func GetInstructionType(inst Instruction) InstructionType {
 		switch inst.Func3 {
 		case 0:
 			return ADDI
+		case 1:
+			return SLLI
 		case 4:
 			return XORI
+		case 5:
+			switch inst.Func7 {
+			case 0:
+				return SRLI
+			case 32:
+				return SRAI
+			default:
+				return Unknown
+			}
 		case 6:
 			return ORI
 		case 7:
@@ -78,6 +95,17 @@ func GetInstructionType(inst Instruction) InstructionType {
 				return ADD
 			case 32:
 				return SUB
+			default:
+				return Unknown
+			}
+		case 1:
+			return SLL
+		case 5:
+			switch inst.Func7 {
+			case 0:
+				return SRL
+			case 32:
+				return SRA
 			default:
 				return Unknown
 			}
