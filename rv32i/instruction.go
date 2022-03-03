@@ -34,6 +34,47 @@ const (
 	Unknown
 )
 
+func InstTypeToString(insttype InstructionType) string {
+	switch insttype {
+	case LW:
+		return "LW"
+	case SW:
+		return "SW"
+	case ADD:
+		return "ADD"
+	case SUB:
+		return "SUB"
+	case ADDI:
+		return "ADDI"
+	case AND:
+		return "AND"
+	case OR:
+		return "OR"
+	case XOR:
+		return "XOR"
+	case ANDI:
+		return "ANDI"
+	case ORI:
+		return "ORI"
+	case XORI:
+		return "XORI"
+	case SLL:
+		return "SLL"
+	case SRL:
+		return "SRL"
+	case SRA:
+		return "SRA"
+	case SLLI:
+		return "SLLI"
+	case SRLI:
+		return "SRL"
+	case SRAI:
+		return "SRAI"
+	default:
+		return "Unknown"
+	}
+}
+
 func Decode(bits uint32) Instruction {
 	var inst Instruction
 	inst.Opcode = uint8(bits & 0x0000007F)
