@@ -1,5 +1,7 @@
 package rv32i
 
+import "errors"
+
 type Cpu struct {
 	Register [32]uint32
 	Pc       uint32
@@ -21,67 +23,67 @@ func Execute(inst Instruction, cpu Cpu) (uint32, error) {
 	switch insttype {
 	case LW:
 		addr := cpu.Register[inst.Rs1] + uint32(inst.Imm_i)
-		return uint32(addr), nil
+		return addr, nil
 	case SW:
 		addr := cpu.Register[inst.Rs1] + uint32(inst.Imm_s)
-		return uint32(addr), nil
+		return addr, nil
+	case ADD:
+		res := cpu.Register[inst.Rs1] + cpu.Register[inst.Rs2]
+		return res, nil
+	case SUB:
+		res := cpu.Register[inst.Rs1] - cpu.Register[inst.Rs2]
+		return res, nil
+	case ADDI:
+		res := cpu.Register[inst.Rs1] + uint32(inst.Imm_i)
+		return res, nil
+	case AND:
+		res := cpu.Register[inst.Rs1] & cpu.Register[inst.Rs2]
+		return res, nil
+	case OR:
+		res := cpu.Register[inst.Rs1] | cpu.Register[inst.Rs2]
+		return res, nil
+	case XOR:
+		res := cpu.Register[inst.Rs1] ^ cpu.Register[inst.Rs2]
+		return res, nil
+	case ANDI:
+		res := cpu.Register[inst.Rs1] & uint32(inst.Imm_i)
+		return res, nil
+	case ORI:
+		res := cpu.Register[inst.Rs1] | uint32(inst.Imm_i)
+		return res, nil
+	case XORI:
+		res := cpu.Register[inst.Rs1] ^ uint32(inst.Imm_i)
+		return res, nil
+	case SLL:
+		res := cpu.Register[inst.Rs1] << (cpu.Register[inst.Rs2] & 0x1F)
+		return res, nil
+	case SRL:
+		res := cpu.Register[inst.Rs1] >> (cpu.Register[inst.Rs2] & 0x1F)
+		return res, nil
+	case SRA:
+		res := uint32(int32(cpu.Register[inst.Rs1]) >> (cpu.Register[inst.Rs2] & 0x1F))
+		return res, nil
+	case SLLI:
+		res := cpu.Register[inst.Rs1] << (inst.Imm_i & 0x1F)
+		return res, nil
+	case SRLI:
+		res := cpu.Register[inst.Rs1] >> (inst.Imm_i & 0x1F)
+		return res, nil
+	case SRAI:
+		res := uint32(int32(cpu.Register[inst.Rs1]) >> (inst.Imm_i & 0x1F))
+		return res, nil
 	default:
-		return 0, nil
+		return 0, errors.New("unknown instruction")
 	}
 }
 
 func WriteBack(data uint32, inst Instruction, cpu Cpu) Cpu {
 	insttype := GetInstructionType(inst)
 	switch insttype {
-	case LW:
-		cpu.Register[inst.Rd] = data
-		return cpu
-	case ADD:
-		cpu.Register[inst.Rd] = cpu.Register[inst.Rs1] + cpu.Register[inst.Rs2]
-		return cpu
-	case SUB:
-		cpu.Register[inst.Rd] = cpu.Register[inst.Rs1] - cpu.Register[inst.Rs2]
-		return cpu
-	case ADDI:
-		cpu.Register[inst.Rd] = cpu.Register[inst.Rs1] + uint32(inst.Imm_i)
-		return cpu
-	case AND:
-		cpu.Register[inst.Rd] = cpu.Register[inst.Rs1] & cpu.Register[inst.Rs2]
-		return cpu
-	case OR:
-		cpu.Register[inst.Rd] = cpu.Register[inst.Rs1] | cpu.Register[inst.Rs2]
-		return cpu
-	case XOR:
-		cpu.Register[inst.Rd] = cpu.Register[inst.Rs1] ^ cpu.Register[inst.Rs2]
-		return cpu
-	case ANDI:
-		cpu.Register[inst.Rd] = cpu.Register[inst.Rs1] & uint32(inst.Imm_i)
-		return cpu
-	case ORI:
-		cpu.Register[inst.Rd] = cpu.Register[inst.Rs1] | uint32(inst.Imm_i)
-		return cpu
-	case XORI:
-		cpu.Register[inst.Rd] = cpu.Register[inst.Rs1] ^ uint32(inst.Imm_i)
-		return cpu
-	case SLL:
-		cpu.Register[inst.Rd] = cpu.Register[inst.Rs1] << (cpu.Register[inst.Rs2] & 0x1F)
-		return cpu
-	case SRL:
-		cpu.Register[inst.Rd] = cpu.Register[inst.Rs1] >> (cpu.Register[inst.Rs2] & 0x1F)
-		return cpu
-	case SRA:
-		cpu.Register[inst.Rd] = uint32(int32(cpu.Register[inst.Rs1]) >> (cpu.Register[inst.Rs2] & 0x1F))
-		return cpu
-	case SLLI:
-		cpu.Register[inst.Rd] = cpu.Register[inst.Rs1] << (inst.Imm_i & 0x1F)
-		return cpu
-	case SRLI:
-		cpu.Register[inst.Rd] = cpu.Register[inst.Rs1] >> (inst.Imm_i & 0x1F)
-		return cpu
-	case SRAI:
-		cpu.Register[inst.Rd] = uint32(int32(cpu.Register[inst.Rs1]) >> (inst.Imm_i & 0x1F))
+	case SW:
 		return cpu
 	default:
+		cpu.Register[inst.Rd] = data
 		return cpu
 	}
 }

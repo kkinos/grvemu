@@ -26,14 +26,14 @@ func Loop(cpu Cpu, memory Memory, debug bool) error {
 		inst := Decode(bits)
 
 		// EX Stage
-		addr, err := Execute(inst, cpu)
+		res, err := Execute(inst, cpu)
 		if err != nil {
 			return err
 		}
 
 		// MEM Stage
 		var data uint32
-		data, cpu, memory = MemoryAccess(addr, inst, cpu, memory)
+		data, cpu, memory = MemoryAccess(res, inst, cpu, memory)
 
 		// WB Stage
 		cpu = WriteBack(data, inst, cpu)
@@ -48,7 +48,7 @@ func Loop(cpu Cpu, memory Memory, debug bool) error {
 			fmt.Printf("rs1_data  : 0x%x\n", cpu.Register[inst.Rs1])
 			fmt.Printf("rs2_data  : 0x%x\n", cpu.Register[inst.Rs2])
 			fmt.Printf("tgt_data  : 0x%x\n", data)
-			fmt.Printf("dmem_addr : %d\n", addr)
+			fmt.Printf("res  	  : %d\n", res)
 			fmt.Print("------\n")
 		}
 		if bits == cpu.Exit {
