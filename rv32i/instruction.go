@@ -31,6 +31,10 @@ const (
 	SLLI
 	SRLI
 	SRAI
+	SLT
+	SLTU
+	SLTI
+	SLTIU
 	Unknown
 )
 
@@ -70,6 +74,14 @@ func InstTypeToString(insttype InstructionType) string {
 		return "SRL"
 	case SRAI:
 		return "SRAI"
+	case SLT:
+		return "SLT"
+	case SLTU:
+		return "SLTU"
+	case SLTI:
+		return "SLTI"
+	case SLTIU:
+		return "SLTIU"
 	default:
 		return "Unknown"
 	}
@@ -103,6 +115,10 @@ func GetInstructionType(inst Instruction) InstructionType {
 			return ADDI
 		case 1:
 			return SLLI
+		case 2:
+			return SLTI
+		case 3:
+			return SLTIU
 		case 4:
 			return XORI
 		case 5:
@@ -141,6 +157,10 @@ func GetInstructionType(inst Instruction) InstructionType {
 			}
 		case 1:
 			return SLL
+		case 2:
+			return SLT
+		case 3:
+			return SLTU
 		case 5:
 			switch inst.Func7 {
 			case 0:

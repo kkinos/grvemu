@@ -72,6 +72,31 @@ func Execute(inst Instruction, cpu Cpu) (uint32, error) {
 	case SRAI:
 		res := uint32(int32(cpu.Register[inst.Rs1]) >> (inst.Imm_i & 0x1F))
 		return res, nil
+	case SLT:
+		if int32(cpu.Register[inst.Rs1]) < int32(cpu.Register[inst.Rs2]) {
+			return 1, nil
+		} else {
+			return 0, nil
+		}
+	case SLTU:
+		if cpu.Register[inst.Rs1] < cpu.Register[inst.Rs2] {
+			return 1, nil
+		} else {
+			return 0, nil
+		}
+	case SLTI:
+		if int32(cpu.Register[inst.Rs1]) < inst.Imm_i {
+			return 1, nil
+		} else {
+			return 0, nil
+		}
+	case SLTIU:
+		if cpu.Register[inst.Rs1] < uint32(inst.Imm_i) {
+			return 1, nil
+		} else {
+			return 0, nil
+		}
+
 	default:
 		return 0, errors.New("unknown instruction")
 	}
