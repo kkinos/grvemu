@@ -18,17 +18,23 @@ func Run(binary []byte, debug bool) error {
 
 func Loop(cpu Cpu, memory Memory, debug bool) error {
 	var bits uint32
+	var pc uint32
 	for {
 		// IF Stage
 		bits = uint32(memory.Memory[cpu.Pc]) | (uint32(memory.Memory[cpu.Pc+1]) << 8) | (uint32(memory.Memory[cpu.Pc+2]) << 16) | (uint32(memory.Memory[cpu.Pc+3]) << 24)
-
+		pc = cpu.Pc
 		// ID Stage
 		inst := Decode(bits)
 
 		// EX Stage
-		res, err := Execute(inst, cpu)
+		brflag, jmflag, res, err := Execute(inst, cpu)
 		if err != nil {
 			return err
+		}
+		if brflag || jmflag {
+			cpu = MovePc(cpu, res)
+		} else {
+			cpu = MovePc(cpu, 4)
 		}
 
 		// MEM Stage
@@ -39,7 +45,7 @@ func Loop(cpu Cpu, memory Memory, debug bool) error {
 		cpu = WriteBack(data, inst, cpu)
 
 		if debug {
-			fmt.Printf("pc   	  : 0x%x\n", cpu.Pc)
+			fmt.Printf("pc   	  : 0x%x\n", pc)
 			fmt.Printf("bits 	  : 0x%x\n", bits)
 			fmt.Printf("inst 	  : %s\n", InstTypeToString(GetInstructionType(inst)))
 			fmt.Printf("rs1  	  : %d\n", inst.Rs1)
@@ -55,7 +61,6 @@ func Loop(cpu Cpu, memory Memory, debug bool) error {
 			break
 		}
 
-		cpu = MovePc(cpu, 4)
 	}
 	return nil
 }

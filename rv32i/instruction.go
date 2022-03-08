@@ -9,6 +9,7 @@ type Instruction struct {
 	Func7  uint8
 	Imm_i  int32
 	Imm_s  int32
+	Imm_b  int32
 }
 
 type InstructionType int
@@ -35,6 +36,12 @@ const (
 	SLTU
 	SLTI
 	SLTIU
+	BEQ
+	BNE
+	BLT
+	BGE
+	BLTU
+	BGEU
 	Unknown
 )
 
@@ -82,6 +89,18 @@ func InstTypeToString(insttype InstructionType) string {
 		return "SLTI"
 	case SLTIU:
 		return "SLTIU"
+	case BEQ:
+		return "BEQ"
+	case BNE:
+		return "BNE"
+	case BLT:
+		return "BLT"
+	case BGE:
+		return "BGE"
+	case BLTU:
+		return "BLTU"
+	case BGEU:
+		return "BGEU"
 	default:
 		return "Unknown"
 	}
@@ -97,6 +116,7 @@ func Decode(bits uint32) Instruction {
 	inst.Func7 = uint8((bits & 0xFE000000) >> 25)
 	inst.Imm_i = int32(bits&0xFFF00000) >> 20
 	inst.Imm_s = (int32(bits&0x00000F80) >> 7) | (int32(bits&0xFE000000) >> 20)
+	inst.Imm_b = (int32(bits&0x80000000) >> 19) | int32(bits&0x00000080<<4) | (int32((bits & 0x7E000000) >> 20)) | int32((bits&0x00000F00)>>7)
 	return inst
 }
 
@@ -176,6 +196,23 @@ func GetInstructionType(inst Instruction) InstructionType {
 			return OR
 		case 7:
 			return AND
+		default:
+			return Unknown
+		}
+	case 99:
+		switch inst.Func3 {
+		case 0:
+			return BEQ
+		case 1:
+			return BNE
+		case 4:
+			return BLT
+		case 5:
+			return BGE
+		case 6:
+			return BLTU
+		case 7:
+			return BGEU
 		default:
 			return Unknown
 		}
