@@ -36,7 +36,12 @@ var rootCmd = &cobra.Command{
 				return err
 			}
 
-			if err := rv32i.Run(binary, debug); err != nil {
+			end, err := cmd.Flags().GetUint32("eof")
+			if err != nil {
+				return err
+			}
+
+			if err := rv32i.Run(binary, end, debug); err != nil {
 				return err
 			}
 
@@ -58,4 +63,6 @@ func Execute() {
 func init() {
 	rootCmd.Flags().StringP("inst", "i", "rv32i", "instruction")
 	rootCmd.Flags().BoolP("debug", "d", false, "debug mode")
+	rootCmd.Flags().Uint32P("eof", "e", 0x0, "end of binary")
+
 }

@@ -2,10 +2,9 @@ package rv32i
 
 import "fmt"
 
-func Run(binary []byte, debug bool) error {
+func Run(binary []byte, end uint32, debug bool) error {
 	var cpu Cpu
-	cpu = SetExit(cpu, 0x00602823)
-
+	cpu = SetExit(cpu, end)
 	var memory Memory
 	memory = RoadMemory(binary, memory)
 
