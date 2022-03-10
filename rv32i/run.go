@@ -26,14 +26,14 @@ func Loop(cpu Cpu, memory Memory, debug bool) error {
 		inst := Decode(bits)
 
 		// EX Stage
-		brflag, jmflag, res, err := Execute(inst, cpu)
+		pcchanged, res, err := Execute(inst, cpu)
 		if err != nil {
 			return err
 		}
-		if brflag || jmflag {
+		if pcchanged {
 			cpu = MovePc(cpu, res)
 		} else {
-			cpu = MovePc(cpu, 4)
+			cpu = AddPc(cpu, 4)
 		}
 
 		// MEM Stage
@@ -41,7 +41,11 @@ func Loop(cpu Cpu, memory Memory, debug bool) error {
 		data, cpu, memory = MemoryAccess(res, inst, cpu, memory)
 
 		// WB Stage
-		cpu = WriteBack(data, inst, cpu)
+		if pcchanged {
+			cpu = WriteBack(pc+4, inst, cpu)
+		} else {
+			cpu = WriteBack(data, inst, cpu)
+		}
 
 		if debug {
 			fmt.Printf("pc   	  : 0x%x\n", pc)
