@@ -148,7 +148,12 @@ func Execute(inst Instruction, cpu Cpu) (bool, uint32, error) {
 	case JALR:
 		res := (cpu.Register[inst.Rs1] + uint32(inst.Imm_j)) & ^uint32(1)
 		return true, res, nil
-
+	case LUI:
+		res := uint32(inst.Imm_u << 12)
+		return false, res, nil
+	case AUIPC:
+		res := cpu.Pc + uint32(inst.Imm_u<<12)
+		return false, res, nil
 	default:
 		return false, 0, errors.New("unknown instruction")
 	}

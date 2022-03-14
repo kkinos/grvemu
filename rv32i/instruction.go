@@ -11,6 +11,7 @@ type Instruction struct {
 	Imm_s  int32
 	Imm_b  int32
 	Imm_j  int32
+	Imm_u  int32
 }
 
 type InstructionType int
@@ -45,6 +46,8 @@ const (
 	BGEU
 	JAL
 	JALR
+	LUI
+	AUIPC
 	Unknown
 )
 
@@ -108,6 +111,10 @@ func InstTypeToString(insttype InstructionType) string {
 		return "JAL"
 	case JALR:
 		return "JALR"
+	case LUI:
+		return "LUI"
+	case AUIPC:
+		return "AUIPC"
 	default:
 		return "Unknown"
 	}
@@ -125,6 +132,7 @@ func Decode(bits uint32) Instruction {
 	inst.Imm_s = (int32(bits&0x00000F80) >> 7) | (int32(bits&0xFE000000) >> 20)
 	inst.Imm_b = (int32(bits&0x80000000) >> 19) | int32(bits&0x00000080<<4) | (int32((bits & 0x7E000000) >> 20)) | int32((bits&0x00000F00)>>7)
 	inst.Imm_j = (int32(bits&0x80000000) >> 11) | int32(bits&0x000FF000) | int32((bits&0x00100000)>>9) | int32((bits&0x7FE00000)>>20)
+	inst.Imm_u = int32(bits&0xFFFFF000) >> 12
 	return inst
 }
 
@@ -165,6 +173,8 @@ func GetInstructionType(inst Instruction) InstructionType {
 		default:
 			return Unknown
 		}
+	case 23:
+		return AUIPC
 	case 35:
 		switch inst.Func3 {
 		case 2:
@@ -207,6 +217,8 @@ func GetInstructionType(inst Instruction) InstructionType {
 		default:
 			return Unknown
 		}
+	case 55:
+		return LUI
 	case 99:
 		switch inst.Func3 {
 		case 0:
