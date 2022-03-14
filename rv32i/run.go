@@ -8,14 +8,15 @@ func Run(binary []byte, end uint32, debug bool) error {
 	var memory Memory
 	memory = RoadMemory(binary, memory)
 
-	if err := Loop(cpu, memory, debug); err != nil {
+	cpu, memory, err := Loop(cpu, memory, debug)
+	if err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func Loop(cpu Cpu, memory Memory, debug bool) error {
+func Loop(cpu Cpu, memory Memory, debug bool) (Cpu, Memory, error) {
 	var bits uint32
 	var pc uint32
 	for {
@@ -28,7 +29,7 @@ func Loop(cpu Cpu, memory Memory, debug bool) error {
 		// EX Stage
 		pcchanged, res, err := Execute(inst, cpu)
 		if err != nil {
-			return err
+			return cpu, memory, err
 		}
 		if pcchanged {
 			cpu = MovePc(cpu, res)
@@ -65,5 +66,5 @@ func Loop(cpu Cpu, memory Memory, debug bool) error {
 		}
 
 	}
-	return nil
+	return cpu, memory, nil
 }
