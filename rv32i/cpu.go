@@ -162,10 +162,12 @@ func Execute(inst Instruction, cpu Cpu) (bool, uint32, error) {
 func WriteBack(data uint32, inst Instruction, cpu Cpu) Cpu {
 	insttype := GetInstructionName(inst)
 	switch insttype {
-	case SW, BEQ, BNE, BLT, BGE, BLTU, BGEU:
+	case SW, BEQ, BNE, BLT, BGE, BLTU, BGEU, Unknown:
 		return cpu
 	default:
-		cpu.Register[inst.Rd] = data
+		if inst.Rd != 0 {
+			cpu.Register[inst.Rd] = data
+		}
 		return cpu
 	}
 }

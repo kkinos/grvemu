@@ -28,7 +28,7 @@ func Loop(cpu Cpu, memory Memory, debug bool) (Cpu, Memory, error) {
 
 		// EX Stage
 		pcchanged, res, err := Execute(inst, cpu)
-		if err != nil {
+		if err != nil && !debug {
 			return cpu, memory, err
 		}
 		if pcchanged {
