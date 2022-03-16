@@ -10,8 +10,8 @@ func RoadMemory(binary []byte, memory Memory) Memory {
 }
 
 func MemoryAccess(res uint32, inst Instruction, cpu Cpu, memory Memory) (uint32, Cpu, Memory) {
-	insttype := GetInstructionType(inst)
-	switch insttype {
+	instname := GetInstructionName(inst)
+	switch instname {
 	case LW:
 		data := uint32(memory.Memory[res]) | (uint32(memory.Memory[res+1]) << 8) | (uint32(memory.Memory[res+2]) << 16) | (uint32(memory.Memory[res+3]) << 24)
 		return data, cpu, memory

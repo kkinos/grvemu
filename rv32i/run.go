@@ -51,7 +51,7 @@ func Loop(cpu Cpu, memory Memory, debug bool) (Cpu, Memory, error) {
 		if debug {
 			fmt.Printf("pc   	  : 0x%x\n", pc)
 			fmt.Printf("bits 	  : 0x%x\n", bits)
-			fmt.Printf("inst 	  : %s\n", InstTypeToString(GetInstructionType(inst)))
+			fmt.Printf("inst 	  : %s\n", InstNameToString(GetInstructionName(inst)))
 			fmt.Printf("rs1  	  : %d\n", inst.Rs1)
 			fmt.Printf("rs2  	  : %d\n", inst.Rs2)
 			fmt.Printf("rd  	  : %d\n", inst.Rd)

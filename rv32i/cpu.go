@@ -24,7 +24,7 @@ func SetExit(cpu Cpu, exit uint32) Cpu {
 }
 
 func Execute(inst Instruction, cpu Cpu) (bool, uint32, error) {
-	insttype := GetInstructionType(inst)
+	insttype := GetInstructionName(inst)
 	switch insttype {
 	case LW:
 		addr := cpu.Register[inst.Rs1] + uint32(inst.Imm_i)
@@ -160,7 +160,7 @@ func Execute(inst Instruction, cpu Cpu) (bool, uint32, error) {
 }
 
 func WriteBack(data uint32, inst Instruction, cpu Cpu) Cpu {
-	insttype := GetInstructionType(inst)
+	insttype := GetInstructionName(inst)
 	switch insttype {
 	case SW, BEQ, BNE, BLT, BGE, BLTU, BGEU:
 		return cpu

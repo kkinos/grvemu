@@ -14,10 +14,10 @@ type Instruction struct {
 	Imm_u  int32
 }
 
-type InstructionType int
+type InstructionName int
 
 const (
-	LW InstructionType = iota
+	LW InstructionName = iota
 	SW
 	ADD
 	SUB
@@ -51,8 +51,8 @@ const (
 	Unknown
 )
 
-func InstTypeToString(insttype InstructionType) string {
-	switch insttype {
+func InstNameToString(instname InstructionName) string {
+	switch instname {
 	case LW:
 		return "LW"
 	case SW:
@@ -136,7 +136,7 @@ func Decode(bits uint32) Instruction {
 	return inst
 }
 
-func GetInstructionType(inst Instruction) InstructionType {
+func GetInstructionName(inst Instruction) InstructionName {
 	switch inst.Opcode {
 	case 3:
 		switch inst.Func3 {
