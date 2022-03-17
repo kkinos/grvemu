@@ -47,3 +47,76 @@ func TestDecodeIFormat1(t *testing.T) {
 		})
 	}
 }
+
+func TestDecodeSFormat(t *testing.T) {
+	tests := []struct {
+		name   string
+		opcode uint32
+		func3  uint32
+		want   InstructionName
+	}{
+		{"SW", 35, 2, SW},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			var bits uint32
+			imm_s := RandIntRange(-2048, 2047)
+			rs1 := rand.Intn(32)
+			rs2 := rand.Intn(32)
+			imm_s_1 := uint32(imm_s) & 0x00000FE0
+			imm_s_2 := uint32(imm_s) & 0x0000001F
+			bits = bits | uint32(imm_s_1<<20) | uint32(rs2<<20) | uint32(rs1<<15) | test.func3<<12 | uint32(imm_s_2<<7) | test.opcode
+			inst := Decode(bits)
+			if test.want != GetInstructionName(inst) {
+				t.Errorf("Decode Instrcution Name Error want %s got %s", InstNameToString(test.want), InstNameToString(GetInstructionName(inst)))
+			}
+			if imm_s != int(inst.Imm_s) {
+				t.Errorf("Decode ImmI Error want %d got %d", imm_s, inst.Imm_i)
+			}
+			if rs1 != int(inst.Rs1) {
+				t.Errorf("Decode RS1 Error want %d got %d", rs1, inst.Rs1)
+			}
+			if rs2 != int(inst.Rs2) {
+				t.Errorf("Decode RS2 Error want %d got %d", rs2, inst.Rs2)
+			}
+		})
+	}
+}
+
+func TestDecodeRFormat(t *testing.T) {
+	tests := []struct {
+		name   string
+		opcode uint32
+		func3  uint32
+		func7  uint32
+		want   InstructionName
+	}{
+		{"ADD", 51, 0, 0, ADD},
+		{"SUB", 51, 0, 32, SUB},
+		{"AND", 51, 7, 0, AND},
+		{"OR", 51, 6, 0, OR},
+		{"XOR", 51, 4, 0, XOR},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			var bits uint32
+			rs1 := rand.Intn(32)
+			rs2 := rand.Intn(32)
+			rd := rand.Intn(32)
+			bits = bits | test.func7<<25 | uint32(rs2<<20) | uint32(rs1<<15) | test.func3<<12 | uint32(rd<<7) | test.opcode
+			inst := Decode(bits)
+			if test.want != GetInstructionName(inst) {
+				t.Errorf("Decode Instrcution Name Error want %s got %s", InstNameToString(test.want), InstNameToString(GetInstructionName(inst)))
+			}
+			if rs1 != int(inst.Rs1) {
+				t.Errorf("Decode RS1 Error want %d got %d", rs1, inst.Rs1)
+			}
+			if rs2 != int(inst.Rs2) {
+				t.Errorf("Decode RS2 Error want %d got %d", rs2, inst.Rs2)
+			}
+			if rd != int(inst.Rd) {
+				t.Errorf("Decode RD Error want %d got %d", rd, inst.Rd)
+			}
+		})
+	}
+}
