@@ -47,6 +47,42 @@ func TestDecodeIFormat1(t *testing.T) {
 		})
 	}
 }
+func TestDecodeIFormat2(t *testing.T) {
+	tests := []struct {
+		name   string
+		opcode uint32
+		func3  uint32
+		func7  uint32
+		want   InstructionName
+	}{
+		{"SLLI", 19, 1, 0, SLLI},
+		{"SRLI", 19, 5, 0, SRLI},
+		{"SRAI", 19, 5, 32, SRAI},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			rand.Seed(time.Now().UnixNano())
+			var bits uint32
+			rs1 := rand.Intn(32)
+			shamt := rand.Intn(32)
+			rd := rand.Intn(32)
+			bits = bits | test.func7<<25 | uint32(shamt<<20) | uint32(rs1<<15) | test.func3<<12 | uint32(rd<<7) | test.opcode
+			inst := Decode(bits)
+			if test.want != GetInstructionName(inst) {
+				t.Errorf("Decode Instrcution Name Error want %s got %s", InstNameToString(test.want), InstNameToString(GetInstructionName(inst)))
+			}
+			if rs1 != int(inst.Rs1) {
+				t.Errorf("Decode RS1 Error want %d got %d", rs1, inst.Rs1)
+			}
+			if shamt != int(inst.Imm_i&0x1F) {
+				t.Errorf("Decode RS2 Error want %d got %d", shamt, inst.Imm_i&0x1F)
+			}
+			if rd != int(inst.Rd) {
+				t.Errorf("Decode RD Error want %d got %d", rd, inst.Rd)
+			}
+		})
+	}
+}
 
 func TestDecodeSFormat(t *testing.T) {
 	tests := []struct {
