@@ -7,7 +7,6 @@ import (
 )
 
 func RandIntRange(a int, b int) int {
-	rand.Seed(time.Now().UnixNano())
 	return a + rand.Intn(b-a+1)
 }
 func TestDecodeIFormat1(t *testing.T) {
@@ -26,6 +25,7 @@ func TestDecodeIFormat1(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			rand.Seed(time.Now().UnixNano())
 			var bits uint32
 			imm_i := RandIntRange(-2048, 2047)
 			rs1 := rand.Intn(32)
@@ -59,6 +59,7 @@ func TestDecodeSFormat(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			rand.Seed(time.Now().UnixNano())
 			var bits uint32
 			imm_s := RandIntRange(-2048, 2047)
 			rs1 := rand.Intn(32)
@@ -99,6 +100,7 @@ func TestDecodeRFormat(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			rand.Seed(time.Now().UnixNano())
 			var bits uint32
 			rs1 := rand.Intn(32)
 			rs2 := rand.Intn(32)
