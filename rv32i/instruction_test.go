@@ -97,6 +97,9 @@ func TestDecodeRFormat(t *testing.T) {
 		{"AND", 51, 7, 0, AND},
 		{"OR", 51, 6, 0, OR},
 		{"XOR", 51, 4, 0, XOR},
+		{"SLL", 51, 1, 0, SLL},
+		{"SRL", 51, 5, 0, SRL},
+		{"SRA", 51, 5, 32, SRA},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
