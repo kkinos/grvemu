@@ -21,6 +21,8 @@ func TestDecodeIFormat1(t *testing.T) {
 		{"ANDI", 19, 7, ANDI},
 		{"ORI", 19, 6, ORI},
 		{"XORI", 19, 4, XORI},
+		{"SLTI", 19, 2, SLTI},
+		{"SLTIU", 19, 3, SLTIU},
 		{"JALR", 103, 0, JALR},
 	}
 	for _, test := range tests {
@@ -136,6 +138,8 @@ func TestDecodeRFormat(t *testing.T) {
 		{"SLL", 51, 1, 0, SLL},
 		{"SRL", 51, 5, 0, SRL},
 		{"SRA", 51, 5, 32, SRA},
+		{"SLT", 51, 2, 0, SLT},
+		{"SLTU", 51, 3, 0, SLTU},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
