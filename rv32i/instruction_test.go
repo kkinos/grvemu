@@ -221,7 +221,7 @@ func TestDecodeJFormat(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			rand.Seed(time.Now().UnixNano())
 			var bits uint32
-			imm_j := RandIntRange(-262144, 262143) << 1
+			imm_j := RandIntRange(-524288, 524287) << 1
 			rd := rand.Intn(32)
 			imm_j_20 := uint32(imm_j) & 0x00100000
 			imm_j_10_1 := uint32(imm_j) & 0x000007FE
@@ -234,7 +234,7 @@ func TestDecodeJFormat(t *testing.T) {
 				t.Errorf("Decode Instrcution Name Error want %s got %s", InstNameToString(test.want), InstNameToString(GetInstructionName(inst)))
 			}
 			if imm_j != int(inst.Imm_j) {
-				t.Errorf("Decode ImmJ Error want %d got %d", imm_j, inst.Rs1)
+				t.Errorf("Decode ImmJ Error want %d got %d", imm_j, inst.Imm_j)
 			}
 			if rd != int(inst.Rd) {
 				t.Errorf("Decode RD Error want %d got %d", rd, inst.Rd)
