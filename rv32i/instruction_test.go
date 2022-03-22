@@ -209,6 +209,37 @@ func TestDecodeBFormat(t *testing.T) {
 	}
 }
 
+func TestDecodeUFormat(t *testing.T) {
+	tests := []struct {
+		name   string
+		opcode uint32
+		want   InstructionName
+	}{
+		{"LUI", 55, LUI},
+		{"AUIPC", 23, AUIPC},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			rand.Seed(time.Now().UnixNano())
+			var bits uint32
+			imm_u := RandIntRange(-524288, 524287)
+			imm_u_31_12 := uint32(imm_u) & 0x000FFFFF
+			rd := rand.Intn(32)
+
+			bits = bits | imm_u_31_12<<12 | uint32(rd<<7) | test.opcode
+			inst := Decode(bits)
+			if test.want != GetInstructionName(inst) {
+				t.Errorf("Decode Instrcution Name Error want %s got %s", InstNameToString(test.want), InstNameToString(GetInstructionName(inst)))
+			}
+			if imm_u != int(inst.Imm_u) {
+				t.Errorf("Decode ImmJ Error want %d got %d", imm_u, inst.Imm_u)
+			}
+			if rd != int(inst.Rd) {
+				t.Errorf("Decode RD Error want %d got %d", rd, inst.Rd)
+			}
+		})
+	}
+}
 func TestDecodeJFormat(t *testing.T) {
 	tests := []struct {
 		name   string
