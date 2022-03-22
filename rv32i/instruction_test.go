@@ -208,3 +208,37 @@ func TestDecodeBFormat(t *testing.T) {
 		})
 	}
 }
+
+func TestDecodeJFormat(t *testing.T) {
+	tests := []struct {
+		name   string
+		opcode uint32
+		want   InstructionName
+	}{
+		{"JAL", 111, JAL},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			rand.Seed(time.Now().UnixNano())
+			var bits uint32
+			imm_j := RandIntRange(-262144, 262143) << 1
+			rd := rand.Intn(32)
+			imm_j_20 := uint32(imm_j) & 0x00100000
+			imm_j_10_1 := uint32(imm_j) & 0x000007FE
+			imm_j_11 := uint32(imm_j) & 0x00000800
+			imm_j_19_12 := uint32(imm_j) & 0x000FF000
+
+			bits = bits | imm_j_20<<11 | imm_j_10_1<<20 | imm_j_11<<9 | imm_j_19_12 | uint32(rd<<7) | test.opcode
+			inst := Decode(bits)
+			if test.want != GetInstructionName(inst) {
+				t.Errorf("Decode Instrcution Name Error want %s got %s", InstNameToString(test.want), InstNameToString(GetInstructionName(inst)))
+			}
+			if imm_j != int(inst.Imm_j) {
+				t.Errorf("Decode ImmJ Error want %d got %d", imm_j, inst.Rs1)
+			}
+			if rd != int(inst.Rd) {
+				t.Errorf("Decode RD Error want %d got %d", rd, inst.Rd)
+			}
+		})
+	}
+}
