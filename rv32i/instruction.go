@@ -8,6 +8,7 @@ type Instruction struct {
 	Func3  uint8
 	Func7  uint8
 	Imm_i  int32
+	Csr    uint32
 	Imm_s  int32
 	Imm_b  int32
 	Imm_j  int32
@@ -48,6 +49,12 @@ const (
 	JALR
 	LUI
 	AUIPC
+	CSRRW
+	CSRRWI
+	CSRRS
+	CSRRSI
+	CSRRC
+	CSRRCI
 	Unknown
 )
 
@@ -115,6 +122,18 @@ func InstNameToString(instname InstructionName) string {
 		return "LUI"
 	case AUIPC:
 		return "AUIPC"
+	case CSRRW:
+		return "CSRRW"
+	case CSRRWI:
+		return "CSRRWI"
+	case CSRRS:
+		return "CSRRS"
+	case CSRRSI:
+		return "CSRRSI"
+	case CSRRC:
+		return "CSRRC"
+	case CSRRCI:
+		return "CSRRCI"
 	default:
 		return "Unknown"
 	}
@@ -129,9 +148,10 @@ func Decode(bits uint32) Instruction {
 	inst.Func3 = uint8((bits & 0x00007000) >> 12)
 	inst.Func7 = uint8((bits & 0xFE000000) >> 25)
 	inst.Imm_i = int32(bits&0xFFF00000) >> 20
-	inst.Imm_s = (int32(bits&0x00000F80) >> 7) | (int32(bits&0xFE000000) >> 20)
-	inst.Imm_b = (int32(bits&0x80000000) >> 19) | int32(bits&0x00000080<<4) | (int32((bits & 0x7E000000) >> 20)) | int32((bits&0x00000F00)>>7)
-	inst.Imm_j = (int32(bits&0x80000000) >> 11) | int32(bits&0x000FF000) | int32((bits&0x00100000)>>9) | int32((bits&0x7FE00000)>>20)
+	inst.Csr = (bits & 0xFFF00000) >> 20
+	inst.Imm_s = (int32(bits&0xFE000000) >> 20) | (int32(bits&0x00000F80) >> 7)
+	inst.Imm_b = (int32(bits&0x80000000) >> 19) | (int32(bits&0x00000080) << 4) | (int32(bits&0x7E000000) >> 20) | (int32(bits&0x00000F00) >> 7)
+	inst.Imm_j = (int32(bits&0x80000000) >> 11) | int32(bits&0x000FF000) | (int32(bits&0x00100000) >> 9) | (int32(bits&0x7FE00000) >> 20)
 	inst.Imm_u = int32(bits&0xFFFFF000) >> 12
 	return inst
 }
@@ -245,6 +265,23 @@ func GetInstructionName(inst Instruction) InstructionName {
 		}
 	case 111:
 		return JAL
+	case 115:
+		switch inst.Func3 {
+		case 1:
+			return CSRRW
+		case 2:
+			return CSRRS
+		case 3:
+			return CSRRC
+		case 5:
+			return CSRRWI
+		case 6:
+			return CSRRSI
+		case 7:
+			return CSRRCI
+		default:
+			return Unknown
+		}
 	default:
 		return Unknown
 	}

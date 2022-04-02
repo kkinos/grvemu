@@ -6,6 +6,7 @@ type Cpu struct {
 	Register [32]uint32
 	Pc       uint32
 	Exit     uint32
+	CSR      [4096]uint32
 }
 
 func AddPc(cpu Cpu, addr uint32) Cpu {
@@ -153,6 +154,9 @@ func Execute(inst Instruction, cpu Cpu) (bool, uint32, error) {
 		return false, res, nil
 	case AUIPC:
 		res := cpu.Pc + uint32(inst.Imm_u<<12)
+		return false, res, nil
+	case CSRRW, CSRRWI, CSRRS, CSRRSI, CSRRC, CSRRCI:
+		res := cpu.CSR[inst.Csr]
 		return false, res, nil
 	default:
 		return false, 0, errors.New("unknown instruction")

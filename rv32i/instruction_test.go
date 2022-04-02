@@ -32,7 +32,7 @@ func TestDecodeRFormat(t *testing.T) {
 			rs1 := rand.Intn(32)
 			rs2 := rand.Intn(32)
 			rd := rand.Intn(32)
-			bits = bits | test.func7<<25 | uint32(rs2<<20) | uint32(rs1<<15) | test.func3<<12 | uint32(rd<<7) | test.opcode
+			bits = bits | test.func7<<25 | uint32(rs2)<<20 | uint32(rs1)<<15 | test.func3<<12 | uint32(rd)<<7 | test.opcode
 			inst := Decode(bits)
 			if test.want != GetInstructionName(inst) {
 				t.Errorf("Decode Instrcution Name Error want %s got %s", InstNameToString(test.want), InstNameToString(GetInstructionName(inst)))
@@ -76,7 +76,7 @@ func TestDecodeIFormat1(t *testing.T) {
 			imm_i := RandIntRange(-2048, 2047)
 			rs1 := rand.Intn(32)
 			rd := rand.Intn(32)
-			bits = bits | uint32(imm_i<<20) | uint32(rs1<<15) | test.func3<<12 | uint32(rd<<7) | test.opcode
+			bits = bits | uint32(imm_i)<<20 | uint32(rs1)<<15 | test.func3<<12 | uint32(rd)<<7 | test.opcode
 			inst := Decode(bits)
 			if test.want != GetInstructionName(inst) {
 				t.Errorf("Decode Instrcution Name Error want %s got %s", InstNameToString(test.want), InstNameToString(GetInstructionName(inst)))
@@ -112,7 +112,7 @@ func TestDecodeIFormat2(t *testing.T) {
 			rs1 := rand.Intn(32)
 			shamt := rand.Intn(32)
 			rd := rand.Intn(32)
-			bits = bits | test.func7<<25 | uint32(shamt<<20) | uint32(rs1<<15) | test.func3<<12 | uint32(rd<<7) | test.opcode
+			bits = bits | test.func7<<25 | uint32(shamt)<<20 | uint32(rs1)<<15 | test.func3<<12 | uint32(rd)<<7 | test.opcode
 			inst := Decode(bits)
 			if test.want != GetInstructionName(inst) {
 				t.Errorf("Decode Instrcution Name Error want %s got %s", InstNameToString(test.want), InstNameToString(GetInstructionName(inst)))
@@ -130,6 +130,44 @@ func TestDecodeIFormat2(t *testing.T) {
 	}
 }
 
+func TestDecodeIFormat3(t *testing.T) {
+	tests := []struct {
+		name   string
+		opcode uint32
+		func3  uint32
+		want   InstructionName
+	}{
+		{"CSRRW", 115, 1, CSRRW},
+		{"CSRRWI", 115, 5, CSRRWI},
+		{"CSRRS", 115, 2, CSRRS},
+		{"CSRRSI", 115, 6, CSRRSI},
+		{"CSRRC", 115, 3, CSRRC},
+		{"CSRRCI", 115, 7, CSRRCI},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			rand.Seed(time.Now().UnixNano())
+			var bits uint32
+			csr := RandIntRange(0, 4095)
+			rs1 := rand.Intn(32)
+			rd := rand.Intn(32)
+			bits = bits | uint32(csr)<<20 | uint32(rs1)<<15 | test.func3<<12 | uint32(rd)<<7 | test.opcode
+			inst := Decode(bits)
+			if test.want != GetInstructionName(inst) {
+				t.Errorf("Decode Instrcution Name Error want %s got %s", InstNameToString(test.want), InstNameToString(GetInstructionName(inst)))
+			}
+			if csr != int(inst.Csr) {
+				t.Errorf("Decode CSR Error want %d got %d", csr, inst.Csr)
+			}
+			if rs1 != int(inst.Rs1) {
+				t.Errorf("Decode RS1 Error want %d got %d", rs1, inst.Rs1)
+			}
+			if rd != int(inst.Rd) {
+				t.Errorf("Decode RD Error want %d got %d", rd, inst.Rd)
+			}
+		})
+	}
+}
 func TestDecodeSFormat(t *testing.T) {
 	tests := []struct {
 		name   string
@@ -148,7 +186,7 @@ func TestDecodeSFormat(t *testing.T) {
 			rs2 := rand.Intn(32)
 			imm_s_11_5 := uint32(imm_s) & 0x00000FE0
 			imm_s_4_0 := uint32(imm_s) & 0x0000001F
-			bits = bits | imm_s_11_5<<20 | uint32(rs2<<20) | uint32(rs1<<15) | test.func3<<12 | imm_s_4_0<<7 | test.opcode
+			bits = bits | imm_s_11_5<<20 | uint32(rs2)<<20 | uint32(rs1)<<15 | test.func3<<12 | imm_s_4_0<<7 | test.opcode
 			inst := Decode(bits)
 			if test.want != GetInstructionName(inst) {
 				t.Errorf("Decode Instrcution Name Error want %s got %s", InstNameToString(test.want), InstNameToString(GetInstructionName(inst)))
@@ -191,7 +229,7 @@ func TestDecodeBFormat(t *testing.T) {
 			imm_b_10_5 := uint32(imm_b) & 0x000007E0
 			imm_b_4_1 := uint32(imm_b) & 0x0000001E
 			imm_b_11 := uint32(imm_b) & 0x00000800
-			bits = bits | imm_b_12<<19 | imm_b_10_5<<20 | uint32(rs2<<20) | uint32(rs1<<15) | test.func3<<12 | imm_b_4_1<<7 | imm_b_11>>4 | test.opcode
+			bits = bits | imm_b_12<<19 | imm_b_10_5<<20 | uint32(rs2)<<20 | uint32(rs1)<<15 | test.func3<<12 | imm_b_4_1<<7 | imm_b_11>>4 | test.opcode
 			inst := Decode(bits)
 			if test.want != GetInstructionName(inst) {
 				t.Errorf("Decode Instrcution Name Error want %s got %s", InstNameToString(test.want), InstNameToString(GetInstructionName(inst)))
@@ -226,7 +264,7 @@ func TestDecodeUFormat(t *testing.T) {
 			imm_u_31_12 := uint32(imm_u) & 0x000FFFFF
 			rd := rand.Intn(32)
 
-			bits = bits | imm_u_31_12<<12 | uint32(rd<<7) | test.opcode
+			bits = bits | imm_u_31_12<<12 | uint32(rd)<<7 | test.opcode
 			inst := Decode(bits)
 			if test.want != GetInstructionName(inst) {
 				t.Errorf("Decode Instrcution Name Error want %s got %s", InstNameToString(test.want), InstNameToString(GetInstructionName(inst)))
@@ -259,7 +297,7 @@ func TestDecodeJFormat(t *testing.T) {
 			imm_j_11 := uint32(imm_j) & 0x00000800
 			imm_j_19_12 := uint32(imm_j) & 0x000FF000
 
-			bits = bits | imm_j_20<<11 | imm_j_10_1<<20 | imm_j_11<<9 | imm_j_19_12 | uint32(rd<<7) | test.opcode
+			bits = bits | imm_j_20<<11 | imm_j_10_1<<20 | imm_j_11<<9 | imm_j_19_12 | uint32(rd)<<7 | test.opcode
 			inst := Decode(bits)
 			if test.want != GetInstructionName(inst) {
 				t.Errorf("Decode Instrcution Name Error want %s got %s", InstNameToString(test.want), InstNameToString(GetInstructionName(inst)))
