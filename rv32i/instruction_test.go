@@ -168,6 +168,27 @@ func TestDecodeIFormat3(t *testing.T) {
 		})
 	}
 }
+func TestDecodeIFormat4(t *testing.T) {
+	tests := []struct {
+		name   string
+		opcode uint32
+		func3  uint32
+		want   InstructionName
+	}{
+		{"ECALL", 115, 0, ECALL},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			rand.Seed(time.Now().UnixNano())
+			var bits uint32
+			bits = bits | test.func3<<12 | test.opcode
+			inst := Decode(bits)
+			if test.want != GetInstructionName(inst) {
+				t.Errorf("Decode Instrcution Name Error want %s got %s", InstNameToString(test.want), InstNameToString(GetInstructionName(inst)))
+			}
+		})
+	}
+}
 func TestDecodeSFormat(t *testing.T) {
 	tests := []struct {
 		name   string

@@ -158,6 +158,9 @@ func Execute(inst Instruction, cpu Cpu) (bool, uint32, error) {
 	case CSRRW, CSRRWI, CSRRS, CSRRSI, CSRRC, CSRRCI:
 		res := cpu.CSR[inst.Csr]
 		return false, res, nil
+	case ECALL:
+		res := cpu.CSR[0x305] // 0x305 is mtvec
+		return true, res, nil
 	default:
 		return false, 0, errors.New("unknown instruction")
 	}
@@ -166,7 +169,7 @@ func Execute(inst Instruction, cpu Cpu) (bool, uint32, error) {
 func WriteBack(data uint32, inst Instruction, cpu Cpu) Cpu {
 	insttype := GetInstructionName(inst)
 	switch insttype {
-	case SW, BEQ, BNE, BLT, BGE, BLTU, BGEU, Unknown:
+	case SW, BEQ, BNE, BLT, BGE, BLTU, BGEU, ECALL, Unknown:
 		return cpu
 	default:
 		if inst.Rd != 0 {

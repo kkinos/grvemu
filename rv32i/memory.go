@@ -40,6 +40,9 @@ func MemoryAccess(res uint32, inst Instruction, cpu Cpu, memory Memory) (uint32,
 	case CSRRCI:
 		cpu.CSR[inst.Csr] = cpu.CSR[inst.Csr] & ^uint32(inst.Rs1)
 		return res, cpu, memory
+	case ECALL:
+		cpu.CSR[0x342] = 11 // 0x342 is mcause
+		return res, cpu, memory
 	default:
 		return res, cpu, memory
 	}

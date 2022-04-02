@@ -55,6 +55,7 @@ const (
 	CSRRSI
 	CSRRC
 	CSRRCI
+	ECALL
 	Unknown
 )
 
@@ -134,6 +135,8 @@ func InstNameToString(instname InstructionName) string {
 		return "CSRRC"
 	case CSRRCI:
 		return "CSRRCI"
+	case ECALL:
+		return "ECALL"
 	default:
 		return "Unknown"
 	}
@@ -267,6 +270,12 @@ func GetInstructionName(inst Instruction) InstructionName {
 		return JAL
 	case 115:
 		switch inst.Func3 {
+		case 0:
+			if inst.Rs1 == 0 && inst.Rd == 0 {
+				return ECALL
+			} else {
+				return Unknown
+			}
 		case 1:
 			return CSRRW
 		case 2:
