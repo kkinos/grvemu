@@ -271,7 +271,7 @@ func GetInstructionName(inst Instruction) InstructionName {
 	case 115:
 		switch inst.Func3 {
 		case 0:
-			if inst.Rs1 == 0 && inst.Rd == 0 {
+			if inst.Rs1 == 0 && inst.Rd == 0 && inst.Imm_i == 0 {
 				return ECALL
 			} else {
 				return Unknown
