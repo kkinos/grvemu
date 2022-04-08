@@ -57,8 +57,8 @@ func Loop(cpu Cpu, memory Memory, debug bool) (Cpu, Memory, error) {
 			fmt.Printf("rd  	  : %d\n", inst.Rd)
 			fmt.Printf("rs1_data  : 0x%x\n", cpu.Register[inst.Rs1])
 			fmt.Printf("rs2_data  : 0x%x\n", cpu.Register[inst.Rs2])
-			fmt.Printf("tgt_data  : 0x%x\n", data)
-			fmt.Printf("res  	  : %d\n", res)
+			fmt.Printf("wb_data   : 0x%x\n", cpu.Register[inst.Rd])
+			fmt.Printf("gp  	  : %d\n", cpu.Register[3])
 			fmt.Print("------\n")
 		}
 		if bits == cpu.Exit {
