@@ -147,7 +147,7 @@ func Execute(inst Instruction, cpu Cpu) (bool, uint32, error) {
 		res := cpu.Pc + uint32(inst.Imm_j)
 		return true, res, nil
 	case JALR:
-		res := (cpu.Register[inst.Rs1] + uint32(inst.Imm_j)) & ^uint32(1)
+		res := (cpu.Register[inst.Rs1] + uint32(inst.Imm_i)) & ^uint32(1)
 		return true, res, nil
 	case LUI:
 		res := uint32(inst.Imm_u << 12)
