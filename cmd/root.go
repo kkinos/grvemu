@@ -23,6 +23,10 @@ var rootCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		test, err := cmd.Flags().GetBool("test")
+		if err != nil {
+			return err
+		}
 		switch inst {
 		case "rv32i":
 			file, err := os.Open(args[0])
@@ -41,7 +45,7 @@ var rootCmd = &cobra.Command{
 				return err
 			}
 
-			if err := rv32i.Run(binary, end, debug); err != nil {
+			if err := rv32i.Run(binary, end, debug, test); err != nil {
 				return err
 			}
 
@@ -63,6 +67,7 @@ func Execute() {
 func init() {
 	rootCmd.Flags().StringP("inst", "i", "rv32i", "instruction")
 	rootCmd.Flags().BoolP("debug", "d", false, "debug mode")
+	rootCmd.Flags().BoolP("test", "t", false, "display global pointer")
 	rootCmd.Flags().Uint32P("eof", "e", 0x0, "end of binary")
 
 }

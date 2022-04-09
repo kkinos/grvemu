@@ -2,13 +2,13 @@ package rv32i
 
 import "fmt"
 
-func Run(binary []byte, end uint32, debug bool) error {
+func Run(binary []byte, end uint32, debug bool, test bool) error {
 	var cpu Cpu
 	cpu = SetExit(cpu, end)
 	var memory Memory
 	memory = RoadMemory(binary, memory)
 
-	cpu, memory, err := Loop(cpu, memory, debug)
+	cpu, memory, err := Loop(cpu, memory, debug, test)
 	if err != nil {
 		return err
 	}
@@ -16,7 +16,7 @@ func Run(binary []byte, end uint32, debug bool) error {
 	return nil
 }
 
-func Loop(cpu Cpu, memory Memory, debug bool) (Cpu, Memory, error) {
+func Loop(cpu Cpu, memory Memory, debug bool, test bool) (Cpu, Memory, error) {
 	var bits uint32
 	var pc uint32
 	for {
@@ -49,6 +49,7 @@ func Loop(cpu Cpu, memory Memory, debug bool) (Cpu, Memory, error) {
 		}
 
 		if debug {
+			fmt.Print("------\n")
 			fmt.Printf("pc   	  : 0x%x\n", pc)
 			fmt.Printf("bits 	  : 0x%x\n", bits)
 			fmt.Printf("inst 	  : %s\n", InstNameToString(GetInstructionName(inst)))
@@ -58,8 +59,10 @@ func Loop(cpu Cpu, memory Memory, debug bool) (Cpu, Memory, error) {
 			fmt.Printf("rs1_data  : 0x%x\n", cpu.Register[inst.Rs1])
 			fmt.Printf("rs2_data  : 0x%x\n", cpu.Register[inst.Rs2])
 			fmt.Printf("wb_data   : 0x%x\n", cpu.Register[inst.Rd])
+
+		}
+		if test {
 			fmt.Printf("gp  	  : %d\n", cpu.Register[3])
-			fmt.Print("------\n")
 		}
 		if bits == cpu.Exit {
 			break
