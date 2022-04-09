@@ -1,7 +1,9 @@
 package rv32i
 
+const MEMORY_SIZE = 1024 * 1024
+
 type Memory struct {
-	Memory [1024 * 1024]uint8
+	Memory [MEMORY_SIZE]uint8
 }
 
 func RoadMemory(binary []byte, memory Memory) Memory {
