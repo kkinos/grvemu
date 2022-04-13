@@ -14,7 +14,7 @@ var rootCmd = &cobra.Command{
 	Short: "RISC-V emulator for cli written in Go",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		inst, err := cmd.Flags().GetString("inst")
+		arch, err := cmd.Flags().GetString("arch")
 		if err != nil {
 			return err
 		}
@@ -27,7 +27,7 @@ var rootCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		switch inst {
+		switch arch {
 		case "rv32i":
 			file, err := os.Open(args[0])
 			if err != nil {
@@ -52,7 +52,7 @@ var rootCmd = &cobra.Command{
 		// TODO support rv64i
 
 		default:
-			fmt.Printf("%s is not supported\n", inst)
+			fmt.Printf("%s is not supported\n", arch)
 			fmt.Printf("this emulator supports rv32i\n")
 		}
 		return nil
@@ -65,7 +65,7 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().StringP("inst", "i", "rv32i", "instruction")
+	rootCmd.Flags().StringP("arch", "a", "rv32i", "architecture")
 	rootCmd.Flags().BoolP("debug", "d", false, "debug mode")
 	rootCmd.Flags().BoolP("test", "t", false, "display global pointer")
 	rootCmd.Flags().Uint32P("eof", "e", 0x0, "end of binary")
