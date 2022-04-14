@@ -2,6 +2,8 @@
 
 RISC-V emulator for CLI written in Go
 
+For now, grvemu supports only rv32i.
+
 grvemu can pass some [riscv-tests](https://github.com/riscv-software-src/riscv-tests) and run c program. If you want to try them, you can use [riscv-tools-and-tests-docker-for-grvemu](https://github.com/kinpoko/riscv-tools-and-tests-docker-for-grvemu).
 
 ## Install
