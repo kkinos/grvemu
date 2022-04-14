@@ -28,3 +28,7 @@ Flags:
   -h, --help          help for grvemu
   -t, --test          display global pointer
 ```
+
+## Reference
+
+西山悠太朗,井田健太,2021,RISC-V と Chisel で学ぶ はじめての CPU 自作 オープンソース命令セットによるカスタム CPU 実装への第一歩,技術評論社
