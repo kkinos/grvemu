@@ -1,5 +1,8 @@
 # grvemu
 
+[![Go](https://github.com/kinpoko/grvemu/actions/workflows/go.yml/badge.svg)](https://github.com/kinpoko/grvemu/actions/workflows/go.yml)
+![License](https://img.shields.io/github/license/kinpoko/grvemu?color=blue)
+
 RISC-V emulator for CLI written in Go
 
 For now, grvemu supports only rv32i.
